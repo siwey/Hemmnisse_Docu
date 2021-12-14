@@ -1,0 +1,384 @@
+---
+title: "Hemmnisse von Betrieben"
+author: "Simon R. Wey"
+output: pdf_document
+
+header-includes:
+  - \usepackage{wrapfig}
+  - \usepackage{lipsum}
+
+---
+
+```{r plot1, include=FALSE}
+
+library(echarts4r)
+library(viridisLite)
+library(jsonlite)
+library(tidyverse)
+library(readxl)
+library(zoo)
+library(webshot2)
+webshot::install_phantomjs()
+
+Dat="2011 Q1"
+Branche = 0 #1 = Industrie, 0=DL
+
+xlsx_exa <- read_xlsx("20201112_BeschBar_Hemmn_FK.xlsm", sheet="Hemmnisse_Calc") #,range ="" "d19:d44")
+xlsx_exa <- xlsx_exa[c(141,150:193),]
+xlsx_exa[1,1] <- "Date"
+names(xlsx_exa) <- xlsx_exa[1,]
+
+xlsx_exa <- xlsx_exa[-1,]
+
+xlsx_exa$Date <- as.yearqtr(xlsx_exa$Date,"%Y-%m")
+
+
+xlsx_exa <- subset(xlsx_exa, xlsx_exa$Date>= Dat)
+xlsx_exa$Date <- format(xlsx_exa$Date,format="%Y-Q%q")
+
+
+xlsx_exa$Pharma <- pmax(xlsx_exa$Pharma,0)
+
+if (Branche == 1){
+  myplot <- xlsx_exa |>
+    e_charts(Date) |>
+    e_line(serie=Bau, name="Baugewerbe") |>
+    e_line(MEM,name="MEM-Industrie") |>
+    e_line(Pharma) |>
+    e_title("Arbeitskräftemangel Industrie",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
+    e_tooltip(trigger="axis") |>
+    e_tooltip(formatter = htmlwidgets::JS("
+      function(params){
+        return('<strong>' + params.name + 
+                '</strong><br />' + 
+                parseFloat((params.value[1] * 10) / 10).toFixed(0) +'%') 
+                }")
+    ) |>
+    #e_datazoom(type = "slider") |>
+    e_legend(orient = 'horizontal', left = 300, top = 20) |>
+    e_format_y_axis(suffix = "%") #|>
+    #e_toolbox_feature("saveAsImage")
+} else {
+  myplot <- xlsx_exa |>
+    e_charts(Date) |>
+    e_line(IT) |>
+    e_line(Gastgewerbe) |>
+    e_line(Grosshandel) |>
+    e_line(Gesundheit) |>
+    e_line(Finanzen) |>
+    e_title("Arbeitskräftemangel Dienstleistung",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
+    e_tooltip(trigger="axis") |>
+    e_tooltip(formatter = htmlwidgets::JS("
+      function(params){
+        return('<strong>' + params.name + 
+                '</strong><br />' + 
+                parseFloat((params.value[1] * 10) / 10).toFixed(0) +'%') 
+                }")
+    ) |>
+    #e_datazoom(type = "slider") |>
+    e_legend(orient = 'horizontal', left = 300, top = 30) |>
+    e_format_y_axis(suffix = "%") #|>
+    #e_toolbox_feature("saveAsImage")
+
+htmlwidgets::saveWidget(widget = myplot, file ="/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html")
+
+webshot('/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html', file = '/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot1.png')  
+  
+}
+```
+
+```{r plot1b, include=FALSE}
+
+library(echarts4r)
+library(viridisLite)
+library(jsonlite)
+library(tidyverse)
+library(readxl)
+library(zoo)
+library(webshot2)
+webshot::install_phantomjs()
+
+Dat="2011 Q1"
+Branche = 1 #1 = Industrie, 0=DL
+
+xlsx_exa <- read_xlsx("20201112_BeschBar_Hemmn_FK.xlsm", sheet="Hemmnisse_Calc") #,range ="" "d19:d44")
+xlsx_exa <- xlsx_exa[c(141,150:193),]
+xlsx_exa[1,1] <- "Date"
+names(xlsx_exa) <- xlsx_exa[1,]
+
+xlsx_exa <- xlsx_exa[-1,]
+
+xlsx_exa$Date <- as.yearqtr(xlsx_exa$Date,"%Y-%m")
+
+
+xlsx_exa <- subset(xlsx_exa, xlsx_exa$Date>= Dat)
+xlsx_exa$Date <- format(xlsx_exa$Date,format="%Y-Q%q")
+
+
+xlsx_exa$Pharma <- pmax(xlsx_exa$Pharma,0)
+
+if (Branche == 1){
+  myplot <- xlsx_exa |>
+    e_charts(Date) |>
+    e_line(serie=Bau, name="Baugewerbe") |>
+    e_line(MEM,name="MEM-Industrie") |>
+    e_line(Pharma) |>
+    e_title("Arbeitskräftemangel Industrie",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
+    e_tooltip(trigger="axis") |>
+    e_tooltip(formatter = htmlwidgets::JS("
+      function(params){
+        return('<strong>' + params.name + 
+                '</strong><br />' + 
+                parseFloat((params.value[1] * 10) / 10).toFixed(0) +'%') 
+                }")
+    ) |>
+    #e_datazoom(type = "slider") |>
+    e_legend(orient = 'horizontal', left = 300, top = 20) |>
+    e_format_y_axis(suffix = "%") #|>
+    #e_toolbox_feature("saveAsImage")
+} else {
+  myplot <- xlsx_exa |>
+    e_charts(Date) |>
+    e_line(IT) |>
+    e_line(Gastgewerbe) |>
+    e_line(Grosshandel) |>
+    e_line(Gesundheit) |>
+    e_line(Finanzen) |>
+    e_title("Arbeitskräftemangel Dienstleistung",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
+    e_tooltip(trigger="axis") |>
+    e_tooltip(formatter = htmlwidgets::JS("
+      function(params){
+        return('<strong>' + params.name + 
+                '</strong><br />' + 
+                parseFloat((params.value[1] * 10) / 10).toFixed(0) +'%') 
+                }")
+    ) |>
+    #e_datazoom(type = "slider") |>
+    e_legend(orient = 'horizontal', left = 300, top = 30) |>
+    e_format_y_axis(suffix = "%") #|>
+    #e_toolbox_feature("saveAsImage")
+}
+htmlwidgets::saveWidget(widget = myplot, file ="/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html")
+
+webshot('/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html', file = '/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot1b.png')  
+```
+
+```{r plot2, include=FALSE}
+
+setwd("/Users/simonwey/Repos/Hemmnisse")
+library(echarts4r)
+library(viridisLite)
+library(jsonlite)
+library(tidyverse)
+library(readxl)
+library(webshot2)
+webshot::install_phantomjs()
+
+Dat="2011 Q1"
+
+
+xlsx_exa <- read_xlsx("20201112_BeschBar_Hemmn_FK.xlsm", sheet="Hemmnisse_Calc") #,range ="" "d19:d44")
+xlsx_exa <- xlsx_exa[c(141,150:193),]
+xlsx_exa[1,1] <- "Date"
+names(xlsx_exa) <- xlsx_exa[1,]
+
+xlsx_exa <- xlsx_exa[-1,]
+
+
+V20 <- c(round(as.numeric(tail(xlsx_exa$IT,n=1)),0),round(as.numeric(tail(xlsx_exa$Gesundheit,n=1)),0),round(as.numeric(tail(xlsx_exa$Gastgewerbe,n=1)),0),round(as.numeric(tail(xlsx_exa$Grosshandel,n=1)),0),round(as.numeric(tail(xlsx_exa$Finanzen,n=1)),0),round(as.numeric(tail(xlsx_exa$Bau,n=1)),0),round(as.numeric(tail(xlsx_exa$MEM,n=1)),0),round(as.numeric(tail(xlsx_exa$Pharma,n=1)),0))
+#V21 <- c(mean(as.numeric(xlsx_exa$IT)),mean(as.numeric(xlsx_exa$Gesundheit)),mean(as.numeric(xlsx_exa$Gastgewerbe)),mean(as.numeric(xlsx_exa$Grosshandel)),mean(as.numeric(xlsx_exa$Finanzen)),mean(as.numeric(xlsx_exa$Bau)),mean(as.numeric(xlsx_exa$MEM)),mean(as.numeric(xlsx_exa$Pharma)))
+V21 <- c(round(mean(as.numeric(head(xlsx_exa$IT,-1))),0),round(mean(as.numeric(head(xlsx_exa$Gesundheit,-1))),0),round(mean(as.numeric(head(xlsx_exa$Gastgewerbe,-1))),0),round(mean(as.numeric(head(xlsx_exa$Grosshandel,-1))),0),round(mean(as.numeric(head(xlsx_exa$Finanzen,-1))),0),round(mean(as.numeric(head(xlsx_exa$Bau,-1))),0),round(mean(as.numeric(head(xlsx_exa$MEM,-1))),0),round(mean(as.numeric(head(xlsx_exa$Pharma,-1))),0))
+names <- c(as.character('IT'),as.character('Gesundheit'),as.character('Gastgewerbe'),as.character('Grosshandel'),as.character('Finanzen'),as.character('Bau'),as.character('MEM-Industrie'),as.character('Pharma'))
+names
+
+d <- data.frame(
+  nam=names,
+  act_val=V20,
+  mean_val=V21
+)
+
+myplot <- d |>
+  e_charts(nam) |>
+  e_bar(act_val, name="2021:Q4") |>
+  e_bar(mean_val, name="Mittelwert 2011 bis 2021:Q3") |>
+ # e_line(Banken) |>
+ # e_line(Gastgewerbe) |>
+ # e_line(Gesundheit) |>
+ # e_line(IT) |>
+  e_x_axis(axisLabel = list(interval = 0, rotate = 45)) |> # rotate
+  e_title("Arbeitskräftemangel: Entwicklung und Satus Quo",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
+  e_tooltip(trigger="axis") |>
+  #e_tooltip(trigger = 'axis',
+  #          format ="percent") |>
+  #e_datazoom(type = "slider") |>
+  e_legend(orient = 'horizontal', left = 250, top = 25) |>
+  e_format_y_axis(suffix = "%") #|>
+  #e_toolbox_feature("saveAsImage")
+
+
+htmlwidgets::saveWidget(widget = myplot, file ="/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html")
+
+webshot('/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html', file = '/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot2.png')
+
+```
+
+
+```{r plot3, include=FALSE}
+
+
+setwd("/Users/simonwey/Repos/Hemmnisse")
+
+library(echarts4r)
+library(viridisLite)
+library(jsonlite)
+library(tidyverse)
+library(readxl)
+library(zoo)
+library(readr)
+library(webshot2)
+webshot::install_phantomjs()
+
+Dat="2011 Q1"
+Tables <- list('Demand','Fin_Sit','M_AK','No_probl','oth_probl',"tech_Kap")
+#Branches <- #list('Bau','MEM','Pharma','IT','Gesundheit','Gastgewerbe','Grosshandel','Finanzen')
+Branches <- list('IT','Gesundheit','Gastgewerbe', 'Grosshandel','Finanzen','Bau','MEM','Pharma')  
+
+#Define function to subset data
+restr_table <- function(a,dat) {
+  a$Date <- as.yearqtr(a$Date,"%Y-%m")
+  a <- subset(a, a$Date>= dat)
+  a$Date <- format(a$Date,format="%Y-Q%q")
+  return(a)
+}
+
+xlsx_exa <- read_xlsx("20201112_BeschBar_Hemmn_FK.xlsm", sheet="Hemmnisse_Calc") #,range ="" "d19:d44")
+#xlsx_exa <- xlsx_exa[c(1:53,71:123,141:193,211:263,281:333,351:403),]
+xlsx_exa_Demand <- xlsx_exa[c(1:53),] 
+xlsx_exa_Fin_Sit <- xlsx_exa[c(71:123),]
+xlsx_exa_M_AK <- xlsx_exa[c(141:193),]
+xlsx_exa_No_probl <- xlsx_exa[c(211:263),]
+xlsx_exa_oth_probl <- xlsx_exa[c(281:333),]
+xlsx_exa_tech_Kap <- xlsx_exa[c(351:403),]
+
+TS_Demand <- c()
+TS_mean_Demand <- c()
+TS_Fin_Sit <- c()
+TS_mean_Fin_Sit <- c()
+TS_M_AK <- c()
+TS_mean_M_AK <- c()
+TS_No_probl <- c()
+TS_mean_No_probl <- c()
+TS_oth_probl <- c()
+TS_mean_oth_probl <- c()
+TS_tech_Kap <- c()
+TS_mean_tech_Kap <- c()
+
+for(i in 1:length(Tables)) { 
+  eval(parse(text=paste(paste0(paste0("xlsx_exa_", Tables[i]),"[1,1]"),"<-'Date'")))
+  eval(parse(text=paste(paste0(paste0(paste0("names(xlsx_exa_", Tables[i]),")"), "<- eval(parse(text=paste0(paste0('xlsx_exa_', Tables[i]),'[1,]')))"))))
+  eval(parse(text=paste(paste0(paste0("xlsx_exa_", Tables[i]), "<- eval(parse(text=paste0(paste0('xlsx_exa_', Tables[i]),'[-1,]')))"))))
+}
+#eval(parse(text=paste(paste0(paste0(paste0("xlsx_exa_", Tables[i]),"$Date")), "<- eval(parse(text=paste0(paste0(paste0(paste0('as.yearqtr(xlsx_exa_', Tables[i]),'$Date,'),'%Y-%m'),')')))")))
+
+for(i in 1:length(Tables)) {
+  eval(parse(text=paste(paste0(paste0("xlsx_exa_", Tables[i]), "<- eval(parse(text=paste0(paste0('restr_table(xlsx_exa_', Tables[i]),',Dat)')))"))))
+  #xlsx_exa_Demand <- eval(parse(text=paste0(paste0("restr_table(xlsx_exa_", Tables[i]),",Dat)")))
+}
+
+for (j in 1:length(Tables)) {
+  for(i in 1:length(Branches)) { 
+    #Last value of the time series obstacles
+    eval(parse(text=paste(paste0("TS_", Tables[j]), "<- eval(parse(text=paste0(paste0(paste0(paste0(paste0(paste0('c(TS_',Tables[j]),',round(as.numeric(tail(xlsx_exa_'), Tables[j]),'$'),Branches[i]),',n=1)),0))')))")))
+    #substract last value for calculating mean
+    eval(parse(text=paste('tmp', "<- eval(parse(text=paste0(paste0(paste0(paste0('mean(as.numeric(head(xlsx_exa_', Tables[j]),'$'),Branches[i]),',-1)))')))")))
+    #Corrected (minus last value) mean of the time series obstacles
+    eval(parse(text=paste(paste0("TS_mean_", Tables[j]), "<- eval(parse(text=paste0(paste0('c(TS_mean_',Tables[j]),',round(tmp,0))')))")))
+    
+    #Mean (with all data) of the time series obstacles
+    #eval(parse(text=paste(paste0("TS_mean_", Tables[j]), "<- eval(parse(text=paste0(paste0(paste0(paste0(paste0(paste0('c(TS_mean_',Tables[j]),',mean(as.numeric(xlsx_exa_'), Tables[j]),'$'),Branches[i]),')))')))")))
+  }
+}
+
+
+Branches[3] <- "Gastgew."
+Branches[4] <- "Grossh."
+
+
+d <- data.frame(
+  nam=unlist(Branches),
+  dem=TS_Demand,
+  fin=TS_Fin_Sit,
+  AKM=TS_M_AK,
+  NPr=TS_No_probl,
+  dem_m=TS_mean_Demand,
+  fin_m=TS_mean_Fin_Sit,
+  AKM_m=TS_mean_M_AK,
+  NPr_m=TS_mean_No_probl
+  #mean_val=V21
+)
+
+#d$AKM <- paste(round(d$AKM, 0), "%", sep="")
+
+myplot <-d |>
+  e_charts(nam,width=750) |>
+  e_bar(AKM) |>
+  e_bar(AKM_m) |>
+  e_bar(NPr) |>
+  e_bar(NPr_m) |>
+  e_color(
+    c("#C0392B","#ffaf51","#1A5276","#5DADE2"),
+  ) |>
+  #e_bar(dem, name="Demand") |>
+  #e_bar(fin) |>
+  #e_bar(NPr) |>
+  e_x_axis(axisLabel = list(interval = 0, rotate = 75)) |> # rotate
+  e_title("Hemmnisse",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
+  e_tooltip(trigger="axis") |>
+  #e_datazoom(type = "slider") |>
+  e_legend(orient = 'horizontal', left = 250, top = 25) |>
+  e_format_y_axis(suffix = "%") #|>
+  #e_toolbox_feature("saveAsImage")
+
+htmlwidgets::saveWidget(widget = myplot, file ="/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html")
+
+webshot('/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html', file = '/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot3.png')
+
+```    
+
+# Wrap text left
+Mit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit \begin{wrapfigure}{l}{0.5\textwidth}
+  \centering
+    \includegraphics[width=\linewidth]{/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot1b.png}
+  \caption{Plot of pressure against temperature}
+\end{wrapfigure}
+anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme 
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+  \centering
+    \includegraphics[width=\linewidth]{/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot1.png}
+  \caption{Plot of pressure against temperature}
+\end{wrapfigure}
+des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses JahresMit der Zunahme des Fachkräfteproblems seit anfangs dieses Jahres
+
+
+
+\newpage
+
+# Wrap text right
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \centering
+    \includegraphics[trim={0 0 0 0},clip]{/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot2.png}
+
+  \caption{Plot of pressure against temperature}
+\end{wrapfigure}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \centering
+    \includegraphics[trim={0 0 9cm 0},clip]{/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot3.png}
+
+  \caption{Plot of pressure against temperature}
+\end{wrapfigure}
+
+
+#\lipsum[1-3]
