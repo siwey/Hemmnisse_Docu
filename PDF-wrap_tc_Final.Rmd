@@ -40,34 +40,21 @@ xlsx_exa$Date <- format(xlsx_exa$Date,format="%Y-Q%q")
 
 xlsx_exa$Pharma <- pmax(xlsx_exa$Pharma,0)
 
-if (Branche == 1){
   myplot <- xlsx_exa |>
     e_charts(Date) |>
-    e_line(serie=Bau, name="Baugewerbe") |>
-    e_line(MEM,name="MEM-Industrie") |>
-    e_line(Pharma) |>
-    e_title("Arbeitskräftemangel Industrie",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
-    e_tooltip(trigger="axis") |>
-    e_tooltip(formatter = htmlwidgets::JS("
-      function(params){
-        return('<strong>' + params.name + 
-                '</strong><br />' + 
-                parseFloat((params.value[1] * 10) / 10).toFixed(0) +'%') 
-                }")
-    ) |>
-    #e_datazoom(type = "slider") |>
-    e_legend(orient = 'horizontal', left = 300, top = 20) |>
-    e_format_y_axis(suffix = "%") #|>
-    #e_toolbox_feature("saveAsImage")
-} else {
-  myplot <- xlsx_exa |>
-    e_charts(Date) |>
+    e_text_style(fontSize=30) |>
+    e_x_axis(axisLabel=list(interval=2,rotate=45, fontSize=20)) |>
+    e_y_axis(axisLabel=list(rotate=0, fontSize=20)) |>
+    
     e_line(IT) |>
     e_line(Gastgewerbe) |>
     e_line(Grosshandel) |>
     e_line(Gesundheit) |>
     e_line(Finanzen) |>
-    e_title("Arbeitskräftemangel Dienstleistung",subtext="Saisonbereinigte Werte",sublink="www.focus50plus.ch", left="10%") |>
+    e_axis_labels(
+      x = "",
+      y = "[%]"
+    ) |>
     e_tooltip(trigger="axis") |>
     e_tooltip(formatter = htmlwidgets::JS("
       function(params){
@@ -77,15 +64,14 @@ if (Branche == 1){
                 }")
     ) |>
     #e_datazoom(type = "slider") |>
-    e_legend(orient = 'horizontal', left = 300, top = 30) |>
-    e_format_y_axis(suffix = "%") #|>
+    e_legend(orient = 'horizontal', left = 90, top = 0) #|>
+   # e_format_y_axis(suffix = "%") #|>
     #e_toolbox_feature("saveAsImage")
 
 htmlwidgets::saveWidget(widget = myplot, file ="/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html")
 
 webshot('/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/ca_gauge.html', file = '/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot1.png')  
   
-}
 ```
 
 ```{r plot1b, include=FALSE}
@@ -417,7 +403,8 @@ Attraktivität als Zuwanderungsland nicht wirklich förderlich.
 
 \begin{figure}[h] \centering
 \includegraphics[width=\linewidth]{/Users/simonwey/Repos/Hemmnisse_Docu/Graphics/myplot1.png}
-\caption{Hello You}
+\caption{Anteil Dienstleistungsbetriebe mit Arbeitskräftemangel}
+\label{DL_Betr}
 \end{figure}
 
 Während sich also das Arbeitskräfteangebot tendenziell rückläufig entwickelt, nimmt die Nachfrage
@@ -446,7 +433,7 @@ zwischenzeitlich stark ab. Seit jedoch die Corona-Schutzmassnahmen zu Beginn die
 gelockert wurden und die Wirtschaft wieder brummt, harzt die Besetzung von Stellen mit
 Fachkräften in vielen Betrieben bereits wieder. Dies zeigt sich deutlich am oben erwähnten Indikator
 der KOF: seit Beginn des Jahres hat er für praktisch alle Branchen wieder stark zugelegt. Auffällig ist
-der starke Anstieg im Gastgewerbe. Auch in anderen Branchen hat sich die Arbeitskräftesituation
+der starke Anstieg im Gastgewerbe (vgl. Abbildung \ref{DL_Betr}). Auch in anderen Branchen hat sich die Arbeitskräftesituation
 wieder verschärft. Am virulentesten ist das Thema in der Informations- und
 Kommunikationsbranche, im Gesundheitswesen und im Baugewerbe.
 \begin{figure}[h] \centering
@@ -476,7 +463,7 @@ Anpassungen bleiben wirksame und nachhaltige Veränderungen Wunschdenken. Und, s
 Schweiz für Unternehmen attraktiv bleiben, so muss ein unbürokratischer Zugang zu Fachkräften
 gewährleistet sein.
 
-## Regionale Schwierigkeiten bei der Rekrutierung
+## Schwierigkeiten bei der Rekrutierung
 
 \begin{figure}[h]
   \centering
